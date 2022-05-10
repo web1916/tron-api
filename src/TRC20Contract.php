@@ -264,6 +264,32 @@ class TRC20Contract
     }
 
     /**
+     * get allowance
+     *
+     * @param string $owner_address
+     * @param string $spender_address
+     * @return mixed
+     * @throws TronException
+     */
+    public function allowance(string $owner_address, string $spender_address)
+    {
+        $this->address2Hex([$owner_address, $spender_address]);
+        $result = $this->trigger('allowance', null, [$owner_address, $spender_address]);
+
+        return $result[0]->toString();
+    }
+
+    public function address2Hex($address)
+    {
+        if (is_string($address)) {
+            $address = [$address];
+        }
+        foreach ($address as &$addr) {
+            $addr = str_pad($this->_tron->address2HexString($addr), 64, "0", STR_PAD_LEFT);
+        }
+    }
+
+    /**
      * Send TRC20 contract
      *
      * @param string $to
@@ -364,7 +390,7 @@ class TRC20Contract
      * @return mixed
      * @throws TronException
      */
-    private function trigger($function, $address = null, array $params = [])
+    public function trigger($function, $address = null, array $params = [])
     {
         $owner_address = is_null($address) ? '410000000000000000000000000000000000000000' : $this->_tron->address2HexString($address);
 
