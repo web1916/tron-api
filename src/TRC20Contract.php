@@ -273,8 +273,8 @@ class TRC20Contract
      */
     public function allowance(string $owner_address, string $spender_address)
     {
-        $this->address2Hex([$owner_address, $spender_address]);
-        $result = $this->trigger('allowance', null, [$owner_address, $spender_address]);
+        $params = $this->address2Hex([$owner_address, $spender_address]);
+        $result = $this->trigger('allowance', null, $params);
 
         return $result[0]->toString();
     }
@@ -287,6 +287,8 @@ class TRC20Contract
         foreach ($address as &$addr) {
             $addr = str_pad($this->_tron->address2HexString($addr), 64, "0", STR_PAD_LEFT);
         }
+
+        return count($address) === 1 ? current($address) : $address;
     }
 
     /**
